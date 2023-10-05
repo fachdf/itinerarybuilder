@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
   final List<Widget> _screens = [
       const MyHomePage(),
       CityListScreen(cityList: cityList),
-      const SavedPlacesScreen()
+      SavedPlaceScreen()
     ];
 
   @override
@@ -98,3 +98,17 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+List<Place> getSavedPlaces(List<City> cityList) {
+  print("hello?");
+  List<Place> savedPlaces = [];
+  for (City city in cityList) {
+    for (Place place in city.places) {
+      print(place.isFavorite);
+      if (place.isFavorite) {
+        savedPlaces.add(place);
+      }
+    }
+  }
+
+  return savedPlaces;
+}

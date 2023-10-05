@@ -54,45 +54,47 @@ class _MyHomePageState extends State<MyHomePage> {
       //   // ),
       // ),
       body: SingleChildScrollView(
-        child: Container(        
-                padding: const EdgeInsets.only(
-                    top: 75.0, // Add top margin by adjusting the top value
-                    left: 32.0,
-                    right: 16.0
+        child: SingleChildScrollView(
+          child: Container(        
+                  padding: const EdgeInsets.only(
+                      top: 75.0, // Add top margin by adjusting the top value
+                      left: 32.0,
+                      right: 16.0
+                  ),
+                  color: const Color(0xFFFF5900), // Set the background color of the Container,
+                  width: MediaQuery.of(context).size.width,
+                  height: 350,
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hello,',
+                        style: TextStyle(
+                          fontSize: 32.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
+                      ),
+                      Text(
+                        'Where are you going today?',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.white
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      Text(
+                        'Recomended Place to Go',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.white
+                        ),
+                      ),
+                    ],
+                  ),
+                        
                 ),
-                color: const Color(0xFFFF5900), // Set the background color of the Container,
-                width: MediaQuery.of(context).size.width,
-                height: 350,
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hello,',
-                      style: TextStyle(
-                        fontSize: 32.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white
-                      ),
-                    ),
-                    Text(
-                      'Where are you going today?',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Text(
-                      'Recomended Place to Go',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white
-                      ),
-                    ),
-                  ],
-                ),
-                      
-              ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,

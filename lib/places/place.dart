@@ -20,6 +20,7 @@ class Place {
   final int price;
   final String openDays;
   final String openTime;
+  bool isFavorite;
 
   Place({
     required this.name,
@@ -28,6 +29,7 @@ class Place {
     required this.price,
     required this.openDays,
     required this.openTime,
+    this.isFavorite = false
   });
 }
 
@@ -108,7 +110,7 @@ List<City> cityList = [
         openDays: 'Monday - Friday',
         openTime: 'Tokyo Metropolitan Government Building',
       ),
-      // Add more places in Shinjuku as needed
+
     ],
   ),
   City(
@@ -148,7 +150,7 @@ List<City> cityList = [
         openDays: 'Tuesday - Sunday',
         openTime: '10:00 AM - 5:00 PM',
       ),
-      // Add more places in Saitama as needed
+
     ],
 
   ),
@@ -308,5 +310,5 @@ List<City> cityList = [
       ),
     ],
     ),
-  // Add more cities and neighborhoods in Tokyo as needed
+
 ];
