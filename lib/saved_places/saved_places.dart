@@ -59,7 +59,6 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
                       
                     ),
                   ),
-                  // You can add a button or other UI elements for user interaction here
                 ],
               ),
             )  
@@ -79,10 +78,9 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
               ),
             ),
             title: Text(place.name),
-            subtitle: Text('Price: \$${place.price}'),
+            subtitle: Text('Price: ¥${place.price}'),
             onTap: () {
               // Handle place tap, e.g., navigate to the place details screen
-              // You can pass the selected place to the details screen.
               Navigator.push(
                 context,
                 MaterialPageRoute(

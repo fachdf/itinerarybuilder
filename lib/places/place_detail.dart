@@ -3,17 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'place.dart'; // Import your Place class
 
-class PlaceDetailsScreen extends StatelessWidget {
+class PlaceDetailsScreen extends StatefulWidget {
   final Place place;
 
   PlaceDetailsScreen({required this.place});
 
   @override
+  State<PlaceDetailsScreen> createState() => _PlaceDetailsScreenState();
+}
+
+class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          place.name, 
+          widget.place.name, 
           style: TextStyle(
             color: Color.fromARGB(255, 255, 255, 255),
             fontWeight: FontWeight.bold, 
@@ -34,7 +39,7 @@ class PlaceDetailsScreen extends StatelessWidget {
                   aspectRatio: 16/9, 
                   enlargeCenterPage: true,
                 ),
-                items: place.imgUrls.map((imageUrl) {
+                items: widget.place.imgUrls.map((imageUrl) {
                   return Builder(
                     builder: (BuildContext context) {
                       return Container(
@@ -61,7 +66,7 @@ class PlaceDetailsScreen extends StatelessWidget {
                       const Icon(FontAwesomeIcons.calendarCheck),
                       const SizedBox(height: 8.0),
                       Text(
-                        place.openDays,
+                        widget.place.openDays,
                         //style: informationTextStyle,
                       ),
                     ], // Center vertically
@@ -74,7 +79,7 @@ class PlaceDetailsScreen extends StatelessWidget {
                       const Icon(FontAwesomeIcons.clock),
                       const SizedBox(height: 8.0),
                       Text(
-                        place.openTime,
+                        widget.place.openTime,
                         style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                         //style: informationTextStyle,
                       ),
@@ -88,7 +93,7 @@ class PlaceDetailsScreen extends StatelessWidget {
                       const Icon(FontAwesomeIcons.moneyBill),
                       const SizedBox(height: 8.0),
                       Text(
-                        "¥${place.price}",
+                        "¥${widget.place.price}",
                         //style: informationTextStyle,
                       ),
                     ], // Center vertically
@@ -96,8 +101,6 @@ class PlaceDetailsScreen extends StatelessWidget {
                 ),
               ],
             ),
-      
-                    
             Padding(
               padding: EdgeInsets.all(16.0),
               child: Column(
@@ -110,8 +113,27 @@ class PlaceDetailsScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(place.details),
+                  Text(widget.place.details),
                   SizedBox(height: 16.0),
+                  Text(
+                    'Favorite:',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      widget.place.isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: widget.place.isFavorite ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        // Toggle the favorite status
+                        widget.place.isFavorite = !widget.place.isFavorite;
+                      });
+                    },
+                  ),
       
                 ],
               ),
