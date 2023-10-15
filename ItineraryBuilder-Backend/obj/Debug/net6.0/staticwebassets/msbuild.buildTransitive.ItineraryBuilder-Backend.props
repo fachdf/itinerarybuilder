@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\ItineraryBuilder-Backend.props" />
-</Project>
