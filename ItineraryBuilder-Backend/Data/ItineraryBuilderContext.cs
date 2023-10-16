@@ -19,11 +19,18 @@ public class ItineraryBuilderContext : DbContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasSequence<int>("Id", schema: "Photo")
-                .StartsAt(1)
-                .IncrementsBy(1);
-            modelBuilder.HasSequence<int>("Id", schema: "Places")
-                .StartsAt(1)
-                .IncrementsBy(1);
+            modelBuilder.Entity<Photo>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Place>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Place>()
+                .HasMany(e => e.Photos)
+                .WithOne(e => e.Place)
+                .HasForeignKey(e => e.PlaceId)
+                .HasPrincipalKey(e => e.Id)
+                .OnDelete(DeleteBehavior.Cascade);
     }
 }

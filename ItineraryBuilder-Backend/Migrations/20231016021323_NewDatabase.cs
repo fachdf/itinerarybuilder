@@ -5,7 +5,7 @@
 namespace ItineraryBuilder_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class Initialize : Migration
+    public partial class NewDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace ItineraryBuilder_Backend.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PlaceId = table.Column<int>(type: "int", nullable: true)
+                    PlaceId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,7 +42,8 @@ namespace ItineraryBuilder_Backend.Migrations
                         name: "FK_Photos_Places_PlaceId",
                         column: x => x.PlaceId,
                         principalTable: "Places",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

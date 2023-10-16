@@ -1,4 +1,6 @@
-﻿namespace ItineraryBuilder_Backend.Models
+﻿using System.Text.Json.Serialization;
+
+namespace ItineraryBuilder_Backend.Models
 {
     public class Photo
     {
@@ -6,5 +8,7 @@
         public string Url { get; set; }
 
         public int PlaceId { get; set; }
+        [JsonIgnore]
+        public Place Place { get; set; }
     }
 }

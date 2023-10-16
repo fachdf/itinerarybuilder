@@ -21,10 +21,6 @@ namespace ItineraryBuilder_Backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.HasSequence<int>("Id", "Photo");
-
-            modelBuilder.HasSequence<int>("Id", "Places");
-
             modelBuilder.Entity("ItineraryBuilder_Backend.Models.Photo", b =>
                 {
                     b.Property<int>("Id")
@@ -33,7 +29,7 @@ namespace ItineraryBuilder_Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("PlaceId")
+                    b.Property<int>("PlaceId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -74,9 +70,13 @@ namespace ItineraryBuilder_Backend.Migrations
 
             modelBuilder.Entity("ItineraryBuilder_Backend.Models.Photo", b =>
                 {
-                    b.HasOne("ItineraryBuilder_Backend.Models.Place", null)
+                    b.HasOne("ItineraryBuilder_Backend.Models.Place", "Place")
                         .WithMany("Photos")
-                        .HasForeignKey("PlaceId");
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
                 });
 
             modelBuilder.Entity("ItineraryBuilder_Backend.Models.Place", b =>
