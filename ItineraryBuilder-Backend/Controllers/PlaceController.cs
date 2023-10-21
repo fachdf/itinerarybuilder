@@ -29,7 +29,7 @@ namespace ItineraryBuilder_Backend.Controllers
             {
                 return NotFound();
             }
-            return await _context.Places.Include(p => p.Photos).ToListAsync();
+            return await _context.Places.Include(p => p.Photos).Include(q => q.ItineraryPlaces).ToListAsync();
         }
 
         // GET api/<PlaceController>/5
@@ -65,7 +65,6 @@ namespace ItineraryBuilder_Backend.Controllers
                 Name = model.Name,
                 Address = model.Address,
                 Description = model.Description,
-                VisitTime = model.VisitTime,
                 Photos = new List<Photo>()
                 // Add other properties as needed
             };
@@ -93,7 +92,36 @@ namespace ItineraryBuilder_Backend.Controllers
 
         // PUT api/<PlaceController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutPlace(int id, [FromBody] JsonElement input)
+        public async Task<ActionResult> UpdatePlace(int id, [FromBody] Place model)
+        {
+            if (model == null || id != model.Id)
+            {
+                return BadRequest("Invalid input.");
+            }
+
+            var existingPlace = await _context.Places.FirstOrDefaultAsync(ip => ip.Id == model.Id);
+
+            if (existingPlace == null)
+            {
+                // An ItineraryPlace with the same ItineraryId and PlaceId already exists
+                return BadRequest("Object [Place] Not Found.");
+            }
+
+            // Update the properties of the existing ItineraryPlace
+            existingPlace.Name = model.Name;
+            existingPlace.Address = model.Address;
+            existingPlace.Description = model.Description;
+
+            // Iterate through the properties provided in the JSON input
+            await _context.SaveChangesAsync();
+
+            return Ok(existingPlace);
+        }
+
+
+        // PUT api/<PlaceController>/5
+        [HttpPut("UpdateOneAttribute/{id}")]
+        public async Task<ActionResult> UpdatePlaceAttribute(int id, [FromBody] JsonElement input)
         {
             var place = await _context.Places
                 .Include(p => p.Photos)
@@ -126,6 +154,44 @@ namespace ItineraryBuilder_Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(place);
+        }
+
+        [HttpPut("AddPhotoToPlace/{id}")]
+        public async Task<ActionResult<Place>> AddPhotoToPlace(int id, [FromBody] List<PhotoCreateModel> photos)
+        {
+            if (photos == null)
+            {
+                return BadRequest("Invalid input.");
+            }
+            var existingPlace = _context.Places.Include(i => i.Photos).FirstOrDefault(ip => ip.Id == id);
+
+            if (existingPlace == null)
+            {
+                // An ItineraryPlace with the same ItineraryId and PlaceId already exists
+                return BadRequest("Object [Place] Not Found.");
+            }
+
+            // Create Photo instances and associate them with the Place
+            if (photos != null && photos.Any())
+            {
+                foreach (var photoModel in photos)
+                {
+                    var photo = new Photo
+                    {
+                        Url = photoModel.Url,
+                    };
+                    if (existingPlace.Photos != null)
+                    {
+                        existingPlace.Photos = new List<Photo>();
+                    }
+                    existingPlace.Photos.Add(photo);
+                }
+            }
+
+            // Save the Place and its associated Photos to the 
+            await _context.SaveChangesAsync();
+
+            return Ok(existingPlace);
         }
 
         // DELETE api/<PlaceController>/5

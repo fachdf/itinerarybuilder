@@ -10,5 +10,6 @@ namespace ItineraryBuilder_Backend.Models
         public int PlaceId { get; set; }
         [JsonIgnore]
         public Place Place { get; set; }
+       
     }
 }
