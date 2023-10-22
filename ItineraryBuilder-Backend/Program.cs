@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using ItineraryBuilder_Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,9 @@ builder.Services.AddAuthentication(auth =>
         ValidateIssuerSigningKey = true
     };
 });
+
+builder.Services.AddScoped<IUserService, UserService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
