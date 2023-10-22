@@ -21,18 +21,37 @@ namespace ItineraryBuilder_Backend.Controllers
 
         // /api/auth/register
         [HttpPost("Register")]
-        public async Task<IActionResult> RegisterAsync(RegisterViewModel model)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest("Some properties are not valid");
             }
 
             var result = await _userService.RegisterUserAsync(model);
 
-            if(result.IsSuccess)
+            if (result.IsSuccess)
             {
                 return Ok(result); // Status Code 200
+            }
+
+            return BadRequest(result);
+        }
+
+        // /api/auth/login
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Some properties are not valid.");
+            }
+
+            var result = await _userService.LoginuserAsync(model);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
             }
 
             return BadRequest(result);

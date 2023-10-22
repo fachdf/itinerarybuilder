@@ -1,15 +1,18 @@
 ﻿using ItineraryBuilder_Backend.Models;
 using ItineraryBuilder_Backend.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace ItineraryBuilder_Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ItineraryController : Controller
     {
         private readonly ItineraryBuilderContext _context;
@@ -23,6 +26,8 @@ namespace ItineraryBuilder_Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Itinerary>>> GetItineraries()
         {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (_context.Itinerary == null)
             {
                 return NotFound();
@@ -32,21 +37,25 @@ namespace ItineraryBuilder_Backend.Controllers
             {
                 return await _context.Itinerary.ToListAsync();
             }
-            return await _context.Itinerary.Include(i => i.ItineraryPlaces).ThenInclude(j => j.Place).ThenInclude(k => k.Photos).ToListAsync();
+            return await _context.Itinerary.Where(i => i.UserId == userId).Include(i => i.ItineraryPlaces).ThenInclude(j => j.Place).ThenInclude(k => k.Photos).ToListAsync();
 
         }
+
 
         // GET api/<ItineraryController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Itinerary>> GetItinerary(int id)
         {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (_context.Itinerary == null)
             {
                 return NotFound();
             }
 
             var itinerary = await _context.Itinerary
-                .Include(i => i.ItineraryPlaces).ThenInclude(j => j.Place)
+                .Where(i => i.UserId == userId)
+                .Include(i => i.ItineraryPlaces)
+                .ThenInclude(j => j.Place)
                 .ThenInclude(k => k.Photos)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
@@ -61,8 +70,19 @@ namespace ItineraryBuilder_Backend.Controllers
 
         // POST api/<ItineraryController>
         [HttpPost]
-        public async Task<ActionResult<Itinerary>> PostItinerary(Itinerary itinerary)
+        public async Task<ActionResult<Itinerary>> PostItinerary(ItineraryCreateModel model)
         {
+            if(model == null)
+            {
+                return BadRequest("Invalid input.");
+            }
+
+            var itinerary = new Itinerary
+            {
+                Name = model.Name,
+                UserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)
+            };
+
             _context.Itinerary.Add(itinerary);
             await _context.SaveChangesAsync();
 

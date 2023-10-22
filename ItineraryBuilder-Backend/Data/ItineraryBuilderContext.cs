@@ -33,36 +33,36 @@ public class ItineraryBuilderContext : IdentityDbContext
                 .Property(p => p.Id)
                 .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<Place>()
-                .Property(p => p.Id)
-                .ValueGeneratedOnAdd();
+        modelBuilder.Entity<Place>()
+            .Property(p => p.Id)
+            .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<Itinerary>()
-                .Property(p => p.Id)
-                .ValueGeneratedOnAdd();
+        modelBuilder.Entity<Itinerary>()
+            .Property(p => p.Id)
+            .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<Place>()
-                    .HasMany(e => e.Photos)
-                    .WithOne(e => e.Place)
-                    .HasForeignKey(e => e.PlaceId)
-                    .HasPrincipalKey(e => e.Id)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Itinerary>()
-                .HasMany(i => i.ItineraryPlaces)
-                .WithOne(ip => ip.Itinerary)
-                .HasForeignKey(ip => ip.ItineraryId)
-                .HasPrincipalKey(e => e.Id)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Place>()
-                .HasMany(p => p.ItineraryPlaces)
-                .WithOne(ip => ip.Place)
+        modelBuilder.Entity<Place>()
+                .HasMany(e => e.Photos)
+                .WithOne(e => e.Place)
                 .HasForeignKey(e => e.PlaceId)
                 .HasPrincipalKey(e => e.Id)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired(false);
+                .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Itinerary>()
+            .HasMany(i => i.ItineraryPlaces)
+            .WithOne(ip => ip.Itinerary)
+            .HasForeignKey(ip => ip.ItineraryId)
+            .HasPrincipalKey(e => e.Id)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
+
+        modelBuilder.Entity<Place>()
+            .HasMany(p => p.ItineraryPlaces)
+            .WithOne(ip => ip.Place)
+            .HasForeignKey(e => e.PlaceId)
+            .HasPrincipalKey(e => e.Id)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
 
         modelBuilder.Entity<ItineraryPlace>()
             .HasKey(x => new { x.ItineraryId, x.PlaceId });
@@ -76,5 +76,15 @@ public class ItineraryBuilderContext : IdentityDbContext
             .HasOne(ip => ip.Itinerary)
             .WithMany(i => i.ItineraryPlaces)
             .HasForeignKey(ip => ip.ItineraryId);
+
+        modelBuilder.Entity<Itinerary>()
+            .HasOne<IdentityUser>()
+            .WithMany()
+            .HasForeignKey(i => i.UserId);
+
+        modelBuilder.Entity<Place>()
+            .HasOne<IdentityUser>()
+            .WithMany()
+            .HasForeignKey(i => i.UserId);
     }
 }
