@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:itinerarybuilder/home/home.dart';
-import 'package:itinerarybuilder/places/place.dart';
+import 'package:itinerarybuilder/models/place.dart';
 import 'package:itinerarybuilder/places/city_list.dart';
 import 'package:itinerarybuilder/saved_places/saved_places.dart';
 void main() {
@@ -21,12 +23,24 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   int _currentIndex = 0;
-  
+  late Future<List<Place>> placeList;
   final List<Widget> _screens = [
       const MyHomePage(),
-      CityListScreen(cityList: cityList),
-      SavedPlaceScreen()
+      CityListScreen(),
+      //SavedPlaceScreen()
     ];
+
+  void initState() {
+    super.initState();
+    placeList = fetchAllPlaces(); // Initialize placeList with data
+  }
+
+  // Create a method to refresh the data
+  Future<void> refreshData() async {
+    setState(() {
+      placeList = fetchAllPlaces();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,17 +112,14 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-List<Place> getSavedPlaces(List<City> cityList) {
-  print("hello?");
-  List<Place> savedPlaces = [];
-  for (City city in cityList) {
-    for (Place place in city.places) {
-      print(place.isFavorite);
-      if (place.isFavorite) {
-        savedPlaces.add(place);
-      }
-    }
-  }
+Future<List<Place>> fetchAllPlaces() async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:7161/api/Place'));
 
-  return savedPlaces;
+  if (response.statusCode == 200) {
+    Iterable<dynamic> jsonData = json.decode(response.body);
+    List<Place> places = List<Place>.from(jsonData.map((place) => Place.fromJson(place)));
+    return places;
+  } else {
+    throw Exception('Failed to load places');
+  }
 }

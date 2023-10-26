@@ -10,7 +10,7 @@ namespace ItineraryBuilder_Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PhotoController : ControllerBase
     {
         private readonly ItineraryBuilderContext _context;

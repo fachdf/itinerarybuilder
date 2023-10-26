@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:itinerarybuilder/places/place.dart';
+import 'package:itinerarybuilder/models/place.dart';
 import 'package:itinerarybuilder/places/place_detail.dart';
 import 'dart:math';
 
@@ -20,55 +20,55 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // Calculate the saved places within the screen
-    recommendedPlace = getRandomPlaces(cityList, 2);
-    numberSavedPlace = getSavedPlace(cityList);
+    // recommendedPlace = getRandomPlaces(cityList, 2);
+    // numberSavedPlace = getSavedPlace(cityList);
   }
-  int getSavedPlace(List<City> cityList){
-    List<Place> savedPlaces = [];
-    int counter = 0;
-    for (City city in cityList) {
-      for (Place place in city.places) {
-        if (place.isFavorite) {
-          counter++;
-        }
-      }
-    }
+  // int getSavedPlace(List<City> cityList){
+  //   List<Place> savedPlaces = [];
+  //   int counter = 0;
+  //   for (City city in cityList) {
+  //     for (Place place in city.places) {
+  //       if (place.isFavorite) {
+  //         counter++;
+  //       }
+  //     }
+  //   }
 
-    return counter;
-  }
+  //   return counter;
+  // }
 
-  List<Place> getRandomPlaces(List<City> cityList, int count) {
-    List<Place> randomPlaces = [];
-    final Random random = Random();
-    int numberSavedPlace = 0;
-    count = count.clamp(0, cityList.fold<int>(
-      0,
-      (sum, city) => sum + city.places.length,
-    ));
+  // List<Place> getRandomPlaces(List<City> cityList, int count) {
+  //   List<Place> randomPlaces = [];
+  //   final Random random = Random();
+  //   int numberSavedPlace = 0;
+  //   count = count.clamp(0, cityList.fold<int>(
+  //     0,
+  //     (sum, city) => sum + city.places.length,
+  //   ));
 
-    while (randomPlaces.length < count) {
-      // Randomly select a city
-      final City randomCity = cityList[random.nextInt(cityList.length)];
+  //   while (randomPlaces.length < count) {
+  //     // Randomly select a city
+  //     final City randomCity = cityList[random.nextInt(cityList.length)];
 
-      // Randomly select a place from the selected city
-      final Place randomPlace =
-          randomCity.places[random.nextInt(randomCity.places.length)];
+  //     // Randomly select a place from the selected city
+  //     final Place randomPlace =
+  //         randomCity.places[random.nextInt(randomCity.places.length)];
 
       
-      // Add the selected place to the list if it's not already included
-      if (!randomPlaces.contains(randomPlace)) {
-        randomPlaces.add(randomPlace);
-      }
-    }
+  //     // Add the selected place to the list if it's not already included
+  //     if (!randomPlaces.contains(randomPlace)) {
+  //       randomPlaces.add(randomPlace);
+  //     }
+  //   }
 
-    return randomPlaces;
-  }
+  //   return randomPlaces;
+  // }
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  // void _incrementCounter() {
+  //   setState(() {
+  //     _counter++;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -111,56 +111,56 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.white,
                     ),
                   ),
-                  Column(
-                    children: recommendedPlace.map((place) {
-                      return Container(
-                        margin: EdgeInsets.all(5),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0), 
-                          child: ColoredBox(
-                              color: Color.fromARGB(255, 179, 70, 7),
-                            child: Ink(
-                              color: Color.fromARGB(0, 0, 0, 0),
-                              child: ListTile(
-                                tileColor: Colors.blue,
-                                leading: Container(
-                                  width: 60.0,
-                                  height: 60.0,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(place.imgUrls[0]),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                title: Text(place.name, 
-                                  style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Colors.white,
-                                  ),
-                                ),
-                                subtitle: Text('Price: ¥${place.price}', 
-                                  style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Colors.white,
-                                  ),),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          PlaceDetailsScreen(place: place),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                    
-                  ),
+                  // Column(
+                  //   children: recommendedPlace.map((place) {
+                  //     return Container(
+                  //       margin: EdgeInsets.all(5),
+                  //       child: ClipRRect(
+                  //         borderRadius: BorderRadius.circular(10.0), 
+                  //         child: ColoredBox(
+                  //             color: Color.fromARGB(255, 179, 70, 7),
+                  //           child: Ink(
+                  //             color: Color.fromARGB(0, 0, 0, 0),
+                  //             child: ListTile(
+                  //               tileColor: Colors.blue,
+                  //               leading: Container(
+                  //                 width: 60.0,
+                  //                 height: 60.0,
+                  //                 decoration: BoxDecoration(
+                  //                   image: DecorationImage(
+                  //                     image: NetworkImage(place.imgUrls[0]),
+                  //                     fit: BoxFit.cover,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               title: Text(place.name, 
+                  //                 style: TextStyle(
+                  //                 fontSize: 14.0,
+                  //                 color: Colors.white,
+                  //                 ),
+                  //               ),
+                  //               subtitle: Text('Price: ¥${place.price}', 
+                  //                 style: TextStyle(
+                  //                 fontSize: 14.0,
+                  //                 color: Colors.white,
+                  //                 ),),
+                  //               onTap: () {
+                  //                 Navigator.push(
+                  //                   context,
+                  //                   MaterialPageRoute(
+                  //                     builder: (context) =>
+                  //                         PlaceDetailsScreen(place: place),
+                  //                   ),
+                  //                 );
+                  //               },
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     );
+                  //   }).toList(),
+               //     
+                //  ),
                 ],
               ),
             ),
@@ -191,11 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+
     );
   }
 }

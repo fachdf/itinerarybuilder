@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:itinerarybuilder/places/place.dart';
+import 'package:itinerarybuilder/models/place.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:itinerarybuilder/places/place_detail.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'addplace.dart';
 
 class CityDetailsScreen extends StatefulWidget {
-  final City city;
+  final Place place;
 
-  CityDetailsScreen({required this.city});
+  CityDetailsScreen({required this.place});
 
   @override
   _CityDetailsScreenState createState() => _CityDetailsScreenState();
@@ -14,107 +17,124 @@ class CityDetailsScreen extends StatefulWidget {
 
 class _CityDetailsScreenState extends State<CityDetailsScreen> {
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.city.name,
+        title: const Text(
+          "Place List",
           style: TextStyle(
-            color: Color.fromARGB(255, 255, 255, 255),
+            color: Colors.white, // Set text color to white
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color(0xFFFF5900),
-      ),
+        backgroundColor: Color(0xFFFF5900)
+      ),     
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Text(
+              '${widget.place.Name}',
+              style: TextStyle(
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            ),
             Container(
               width: MediaQuery.of(context).size.width * 0.8, // Adjust the width as needed
               height: 256.0, // Adjust the aspect ratio as needed
               child: CarouselSlider(
                 options: CarouselOptions(
-                  autoPlay: true,
                   enlargeCenterPage: true,
+                  aspectRatio: 16 / 9, // Adjust the aspect ratio based on your images
+                  enableInfiniteScroll: true,
+                  viewportFraction: 1, // This makes it full-width
                 ),
-                items: widget.city.imgUrls.map((imageUrl) {
+                items: (widget.place.Photos ?? []).map((photo) {
                   return Builder(
                     builder: (BuildContext context) {
                       return Container(
                         width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.symmetric(horizontal: 5.0),
                         child: Image.network(
-                          imageUrl,
+                          photo.Url,
                           fit: BoxFit.cover,
                         ),
                       );
                     },
                   );
                 }).toList(),
-              ),
+              )
             ),
             Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text('Details: ${widget.city.details}'),
+              child: Text('${widget.place.Description}'),
             ),
-            Text(
-              'Places in ${widget.city.name}',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
+            Padding(
+              padding: EdgeInsets.only(left: 16, bottom: 16),
+              child: Text('Address: ${widget.place.Address}'),
             ),
-            ListView.builder(
-              shrinkWrap: true, // Important to allow the ListView to scroll within a SingleChildScrollView
-              physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner ListView
-              itemCount: widget.city.places.length,
-              itemBuilder: (BuildContext context, int index) {
-                final Place place = widget.city.places[index];
-                return ListTile(
-                  leading: Container(
-                    width: 60.0, // Width of the thumbnail
-                    height: 60.0, // Height of the thumbnail
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          place.imgUrls[0], // Display the thumbnail image
-                        ),
-                        fit: BoxFit.cover, // Crop the image to fit the container
-                      ),
-                    ),
-                  ),
-                  title: Text(place.name),
-                  subtitle: Text('Price: \$${place.price}'),
-                  trailing: IconButton(
-                    icon: Icon(
-                      place.isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: place.isFavorite ? Colors.red : Colors.grey,
-                    ),
+            Column(
+              crossAxisAlignment : CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0), // Adjust the left padding as needed
+                  child: ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        // Toggle the favorite status
-                        place.isFavorite = !place.isFavorite;
-                      });
+                      if(widget.place.GoogleMapUrl != null){
+                        _launchURL(widget.place.GoogleMapUrl ?? "https://google.com");
+                      }
                     },
-                  ),
-                  onTap: () {
-                    // Handle place tap, e.g., navigate to the place details screen
-                    // You can pass the selected place to the details screen.
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaceDetailsScreen(place: place),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0), // Adjust the value for the desired roundness
                       ),
-                    );
-                  },
-                );
-              },
-            ),
+                      primary: Colors.orange, // Set the button's background color to orange
+                      onPrimary: Colors.white, // Set the button's text color to white
+                    ),
+                    child: Text("Direction"), // Replace with your button text
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0), // Adjust the left padding as needed
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0), // Adjust the value for the desired roundness
+                      ),
+                      primary: Colors.red, // Set the button's background color to orange
+                      onPrimary: Colors.white, // Set the button's text color to white
+                    ),
+                    child: Text("Delete"), // Replace with your button text
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
+
+      
     );
+
+    
+  }
+}
+
+
+
+void _launchURL(String url) async {
+  final Uri uri = Uri.parse(url);
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri);
+  } else {
+    throw 'Could not launch $url';
   }
 }

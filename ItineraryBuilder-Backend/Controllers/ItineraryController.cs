@@ -12,7 +12,7 @@ namespace ItineraryBuilder_Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ItineraryController : Controller
     {
         private readonly ItineraryBuilderContext _context;
@@ -26,7 +26,7 @@ namespace ItineraryBuilder_Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Itinerary>>> GetItineraries()
         {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (_context.Itinerary == null)
             {
@@ -37,7 +37,8 @@ namespace ItineraryBuilder_Backend.Controllers
             {
                 return await _context.Itinerary.ToListAsync();
             }
-            return await _context.Itinerary.Where(i => i.UserId == userId).Include(i => i.ItineraryPlaces).ThenInclude(j => j.Place).ThenInclude(k => k.Photos).ToListAsync();
+            // return await _context.Itinerary.Where(i => i.UserId == userId).Include(i => i.ItineraryPlaces).ThenInclude(j => j.Place).ThenInclude(k => k.Photos).ToListAsync();
+            return await _context.Itinerary.Include(i => i.ItineraryPlaces).ThenInclude(j => j.Place).ThenInclude(k => k.Photos).ToListAsync();
 
         }
 
@@ -46,14 +47,14 @@ namespace ItineraryBuilder_Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Itinerary>> GetItinerary(int id)
         {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (_context.Itinerary == null)
             {
                 return NotFound();
             }
 
             var itinerary = await _context.Itinerary
-                .Where(i => i.UserId == userId)
+                //.Where(i => i.UserId == userId)
                 .Include(i => i.ItineraryPlaces)
                 .ThenInclude(j => j.Place)
                 .ThenInclude(k => k.Photos)
@@ -80,7 +81,8 @@ namespace ItineraryBuilder_Backend.Controllers
             var itinerary = new Itinerary
             {
                 Name = model.Name,
-                UserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                UserId = //User.FindFirstValue(ClaimTypes.NameIdentifier)
+               "be3ca64f - a8fd - 465f - 867a - feaf04cf8754"
             };
 
             _context.Itinerary.Add(itinerary);
@@ -167,6 +169,26 @@ namespace ItineraryBuilder_Backend.Controllers
             return Ok(existingItineraryPlace);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteItinerary(int id)
+        {
+            if (_context.Itinerary == null)
+            {
+                return NotFound();
+            }
 
+            var itinerary = await _context.Itinerary.FindAsync(id);
+
+            if (itinerary == null)
+            {
+                return NotFound();
+            }
+
+            _context.Itinerary.Remove(itinerary);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }

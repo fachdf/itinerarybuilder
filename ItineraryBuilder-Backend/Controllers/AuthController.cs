@@ -48,7 +48,7 @@ namespace ItineraryBuilder_Backend.Controllers
             }
 
             var result = await _userService.LoginuserAsync(model);
-
+            
             if (result.IsSuccess)
             {
                 return Ok(result);

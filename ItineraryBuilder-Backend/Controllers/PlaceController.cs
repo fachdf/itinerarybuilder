@@ -3,6 +3,7 @@ using ItineraryBuilder_Backend.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
@@ -14,7 +15,7 @@ namespace ItineraryBuilder_Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PlaceController : ControllerBase
     {
         private readonly ItineraryBuilderContext _context;
@@ -28,24 +29,29 @@ namespace ItineraryBuilder_Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Place>>> GetPlaces()
         {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (_context.Places == null)
             {
                 return NotFound();
             }
-            return await _context.Places.Where(i => i.UserId == userId).Include(p => p.Photos).Include(q => q.ItineraryPlaces).ToListAsync();
+            return await _context.Places
+                //.Where(i => i.UserId == userId)
+                .Include(p => p.Photos).Include(q => q.ItineraryPlaces).ToListAsync();
         }
 
         // GET api/<PlaceController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Place>> GetPlace(int id)
         {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (_context.Places == null)
             {
                 return NotFound();
             }
-            var place = await _context.Places.Where(i => i.UserId == userId).Include(p => p.Photos).FirstOrDefaultAsync(p => p.Id == id);
+            var place = await _context.Places
+                //.Where(i => i.UserId == userId)
+                .Include(p => p.Photos)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (place == null)
             {
@@ -59,9 +65,9 @@ namespace ItineraryBuilder_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<Place>> PostPlace([FromBody] PlaceCreateModel model)
         {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (model == null)
+            if (model == null || string.IsNullOrEmpty(model.Name))
             {
                 return BadRequest("Invalid input.");
             }
@@ -73,7 +79,8 @@ namespace ItineraryBuilder_Backend.Controllers
                 Address = model.Address,
                 Description = model.Description,
                 Photos = new List<Photo>(),
-                UserId = userId
+                UserId = //userId
+                "be3ca64f-a8fd-465f-867a-feaf04cf8754"
                 // Add other properties as needed
             };
 
