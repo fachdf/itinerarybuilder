@@ -1,33 +1,27 @@
-import 'photo.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'place.g.dart';
 
+@JsonSerializable()
 class Place {
-  int Id;
+  String Id;
   String Name;
   String? Address;
   String? Description;
   String? GoogleMapUrl;
-  List<Photo>? Photos;
+  List<String>? PhotoUrls;
 
   Place({
-    required this.Id,
-    required this.Name,
+     required this.Id,
+     required this.Name,
      this.Address,
      this.Description,
      this.GoogleMapUrl,
-     this.Photos,
+     this.PhotoUrls,
   });
 
-  factory Place.fromJson(Map<String, dynamic> json) {
-    List<Photo> photos = List<Photo>.from(json['photos'].map((photo) => Photo.fromJson(photo)));
-    return Place(
-      Id: json['id'],
-      Name: json['name'],
-      Address: json['address'],
-      Description: json['description'],
-      GoogleMapUrl: json['googleMapUrl'],
-      Photos: photos,
-    );
-  }
+  factory Place.fromJson(Map<String, dynamic> json) => _$PlaceFromJson(json);
+  Map<String, dynamic> toJson() => _$PlaceToJson(this);
+  
 }
 
 

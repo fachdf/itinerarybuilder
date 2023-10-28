@@ -1,146 +1,153 @@
-// import 'package:carousel_slider/carousel_slider.dart';
-// import 'package:flutter/material.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import '../models/place.dart'; // Import your Place class
+import 'package:flutter/material.dart';
+import 'package:itinerarybuilder/models/place.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:itinerarybuilder/places/place_detail.dart';
+import 'package:itinerarybuilder/service/firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-// class PlaceDetailsScreen extends StatefulWidget {
-//   final Place place;
+import 'add_place.dart';
 
-//   PlaceDetailsScreen({required this.place});
+class PlaceDetailsScreen extends StatefulWidget {
+  final String placeId;
 
-//   @override
-//   State<PlaceDetailsScreen> createState() => _PlaceDetailsScreenState();
-// }
+  PlaceDetailsScreen({required this.placeId});
 
-// class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(
-//           widget.place.name, 
-//           style: TextStyle(
-//             color: Color.fromARGB(255, 255, 255, 255),
-//             fontWeight: FontWeight.bold, 
-//             )
-//         ),
-//         backgroundColor: const Color(0xFFFF5900),
-//       ),
-//       body: SingleChildScrollView(
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.stretch,
-//           children: [
-//             Container(
-//               width: MediaQuery.of(context).size.width * 0.8, 
-//               height: 256.0, 
-//               child: CarouselSlider(
-//                 options: CarouselOptions(
-//                   autoPlay: true,
-//                   aspectRatio: 16/9, 
-//                   enlargeCenterPage: true,
-//                 ),
-//                 items: widget.place.imgUrls.map((imageUrl) {
-//                   return Builder(
-//                     builder: (BuildContext context) {
-//                       return Container(
-//                         width: MediaQuery.of(context).size.width,
-//                         margin: EdgeInsets.symmetric(horizontal: 5.0),
-//                         child: Image.network(
-//                           imageUrl,
-//                           fit: BoxFit.cover,
-//                         ),
-//                       );
-//                     },
-//                   );
-//                 }).toList(),
-//               ),
-//             ),
-//             SizedBox(height: 10),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//               children: [
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.center,
-//                     children: <Widget>[
-//                       const Icon(FontAwesomeIcons.calendarCheck),
-//                       const SizedBox(height: 8.0),
-//                       Text(
-//                         widget.place.openDays,
-//                         //style: informationTextStyle,
-//                       ),
-//                     ], // Center vertically
-//                   ),
-//                 ),
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.center,
-//                     children: <Widget>[
-//                       const Icon(FontAwesomeIcons.clock),
-//                       const SizedBox(height: 8.0),
-//                       Text(
-//                         widget.place.openTime,
-//                         style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-//                         //style: informationTextStyle,
-//                       ),
-//                     ], // Center vertically
-//                   ),
-//                 ),
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.center,
-//                     children: <Widget>[
-//                       const Icon(FontAwesomeIcons.moneyBill),
-//                       const SizedBox(height: 8.0),
-//                       Text(
-//                         "¥${widget.place.price}",
-//                         //style: informationTextStyle,
-//                       ),
-//                     ], // Center vertically
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             Padding(
-//               padding: EdgeInsets.all(16.0),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     'Details:',
-//                     style: TextStyle(
-//                       fontSize: 18.0,
-//                       fontWeight: FontWeight.bold,
-//                     ),
-//                   ),
-//                   Text(widget.place.details),
-//                   SizedBox(height: 16.0),
-//                   Text(
-//                     'Favorite:',
-//                     style: TextStyle(
-//                       fontSize: 18.0,
-//                       fontWeight: FontWeight.bold,
-//                     ),
-//                   ),
-//                   IconButton(
-//                     icon: Icon(
-//                       widget.place.isFavorite ? Icons.favorite : Icons.favorite_border,
-//                       color: widget.place.isFavorite ? Colors.red : Colors.grey,
-//                     ),
-//                     onPressed: () {
-//                       setState(() {
-//                         // Toggle the favorite status
-//                         widget.place.isFavorite = !widget.place.isFavorite;
-//                       });
-//                     },
-//                   ),
+  @override
+  _PlaceDetailsScreenState createState() => _PlaceDetailsScreenState();
+}
+
+class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
+  @override
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Place List",
+          style: TextStyle(
+            color: Colors.white, // Set text color to white
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Color(0xFFFF5900)
+      ),     
+      body: SingleChildScrollView(
+        child: FutureBuilder<Place>(
+        future: FirestoreService().getPlaceById(widget.placeId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot}"));
+          } else if (!snapshot.hasData ) {
+            return Center(child: Text("No places found."));
+          }
+            return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Text(
+                snapshot.data!.Name ?? "Unknown",
+                style: const TextStyle(
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.8, // Adjust the width as needed
+                height: 256.0, // Adjust the aspect ratio as needed
+                child: CarouselSlider(
+                  options: CarouselOptions(
+                    enlargeCenterPage: true,
+                    aspectRatio: 16 / 9, // Adjust the aspect ratio based on your images
+                    enableInfiniteScroll: true,
+                    viewportFraction: 1, // This makes it full-width
+                  ),
+                  items: (snapshot.data!.PhotoUrls ?? []).map((photo) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Image.network(
+                            photo,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                )
+              ),
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(snapshot.data!.Description ?? "Unknown"),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 16, bottom: 16),
+                child: Text('Address: ${snapshot.data!.Address ?? "Unknown"}'),
+              ),
+              Column(
+                crossAxisAlignment : CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0), // Adjust the left padding as needed
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if(snapshot.data!.GoogleMapUrl != null){
+                          _launchURL(snapshot.data!.GoogleMapUrl ?? "https://google.com");
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0), // Adjust the value for the desired roundness
+                        ),
+                        primary: Colors.orange, // Set the button's background color to orange
+                        onPrimary: Colors.white, // Set the button's text color to white
+                      ),
+                      child: Text("Direction"), // Replace with your button text
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0), // Adjust the left padding as needed
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0), // Adjust the value for the desired roundness
+                        ),
+                        primary: Colors.red, // Set the button's background color to orange
+                        onPrimary: Colors.white, // Set the button's text color to white
+                      ),
+                      child: Text("Delete"), // Replace with your button text
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+          },
+        
+      ),
+
       
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+    )
+    );
+    
+  }
+}
+
+
+
+void _launchURL(String url) async {
+  final Uri uri = Uri.parse(url);
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri);
+  } else {
+    throw 'Could not launch $url';
+  }
+}

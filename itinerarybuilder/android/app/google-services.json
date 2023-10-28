@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "735711669612",
+    "project_id": "dhiahidroponik-49016",
+    "storage_bucket": "dhiahidroponik-49016.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735711669612:android:855dd856da036eb5109749",
+        "android_client_info": {
+          "package_name": "com.dhia.hydroponics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735711669612-d861e10c2it1q0glg5ov3os7skokc7us.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dhia.hydroponics",
+            "certificate_hash": "ba73012061a92f161a61e095d7defbdafa8bb824"
+          }
+        },
+        {
+          "client_id": "735711669612-7ar31nu6q59m4c6917tll65pn86qa49k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQT-iLrXFs1GWhiUKBBJ_DCOZ9nZlKLOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735711669612-7ar31nu6q59m4c6917tll65pn86qa49k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "735711669612-et4foq3ld1fg29h7fq5kbbgh9alaktfl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dhia.hydroponics"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735711669612:android:143882ee08159255109749",
+        "android_client_info": {
+          "package_name": "com.fachdf.itinerarybuilder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735711669612-7ar31nu6q59m4c6917tll65pn86qa49k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQT-iLrXFs1GWhiUKBBJ_DCOZ9nZlKLOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735711669612-7ar31nu6q59m4c6917tll65pn86qa49k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "735711669612-et4foq3ld1fg29h7fq5kbbgh9alaktfl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dhia.hydroponics"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.example.itinerarybuilder
+package com.fachdf.itinerarybuilder
 
 import io.flutter.embedding.android.FlutterActivity
 

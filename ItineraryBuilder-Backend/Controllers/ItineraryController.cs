@@ -82,7 +82,7 @@ namespace ItineraryBuilder_Backend.Controllers
             {
                 Name = model.Name,
                 UserId = //User.FindFirstValue(ClaimTypes.NameIdentifier)
-               "be3ca64f - a8fd - 465f - 867a - feaf04cf8754"
+               "be3ca64f-a8fd-465f-867a-feaf04cf8754"
             };
 
             _context.Itinerary.Add(itinerary);
@@ -168,6 +168,33 @@ namespace ItineraryBuilder_Backend.Controllers
 
             return Ok(existingItineraryPlace);
         }
+
+        // PUT api/<PlaceController>/5
+        [HttpPut("DeletePlaceFromItinerary")]
+        public async Task<ActionResult> DeletePlaceFromItinerary ([FromBody] ItineraryPlaceDeleteModel model)
+        {
+            if (model == null)
+            {
+                return BadRequest("Invalid input.");
+            }
+
+            var existingItineraryPlace = await _context.ItineraryPlace.FirstOrDefaultAsync(ip => ip.ItineraryId == model.ItineraryId && ip.PlaceId == model.PlaceId);
+
+            if (existingItineraryPlace == null)
+            {
+                // An ItineraryPlace with the same ItineraryId and PlaceId already exists
+                return BadRequest("Object [ItineraryPlace] Not Found.");
+            }
+
+            // Update the properties of the existing ItineraryPlace
+            _context.ItineraryPlace.Remove(existingItineraryPlace);
+
+            // Iterate through the properties provided in the JSON input
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteItinerary(int id)

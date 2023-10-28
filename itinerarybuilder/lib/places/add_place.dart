@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:itinerarybuilder/service/firestore.dart';
 
 
 class AddPlaceScreen extends StatefulWidget {
@@ -12,6 +13,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController googleMapUrlController = TextEditingController();  
   TextEditingController photoUrlController = TextEditingController();
   List<String> photoUrls = [];
 
@@ -48,6 +50,10 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
               TextField(
                 controller: descriptionController,
                 decoration: InputDecoration(labelText: "Description"),
+              ),
+              TextField(
+                controller: googleMapUrlController,
+                decoration: InputDecoration(labelText: "Google Map URL"),
               ),
               SizedBox(height: 16.0),
               Row(
@@ -96,18 +102,19 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                         final address = addressController.text;
                         final description = descriptionController.text;
                         final photoUrl = photoUrlController.text;
+                        final googleMapUrl = googleMapUrlController.text;
                         if (photoUrl.isNotEmpty) {
                           photoUrls.add(photoUrl);
                           photoUrlController.clear();
                         }
                         // Do something with the data (e.g., store it in a database)
-                        addPlace(name, address, description, photoUrls);
+                        //addPlace(name, address, description, photoUrls);
+                        FirestoreService().addPlace(name, address, description, googleMapUrl, photoUrls);
                         // Then, navigate back to the previous screen
                         Navigator.pop(context);
                       },
                       child: Text("Submit"),
                     ),
-
                   ),
                 ],
               )
@@ -116,34 +123,5 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
         ),
       ),
     );
-  }
-}
-
-Future<void> addPlace(String name, String address, String description, List<String> photoUrls) async {
-  final url = Uri.parse('http://10.0.2.2:7161/api/Place'); // Replace with your API endpoint
-
-  final List<Map<String, String>> photos = photoUrls.map((url) => {"url": url}).toList();
-
-  final Map<String, dynamic> data = {
-    "name": name,
-    "address": address,
-    "description": description,
-    "photos": photos,
-  };
-
-  final response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode(data),
-  );
-
-  if (response.statusCode == 201) {
-    // The place was successfully created
-    // You can handle the success as needed
-  } else {
-    // Handle errors or show an error message
-    throw Exception('Failed to add place: ${response.statusCode}');
   }
 }
